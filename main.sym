@@ -1,0 +1,236 @@
+004     @WRITE_PROGRAM_MEMORY8.P1
+004-005 @READ_PROGRAM_MEMORY8.P2
+005.0   Close_Slide
+005.1   Open_Slide
+005.2   Close
+005.3   Open
+005.4   Semi_Open
+005.5   Stop
+007.0   SW_Close2
+007.1   SW_Close1
+007.2   SW_Mid
+007.3   SW_Open1
+007.4   SW_Open2
+007.5   SW_Emergency
+007.6   SW_Close_Slide
+007.7   SW_Open_Slide
+008.0   D0
+008     PSP_DATA
+008     portD
+008.1   D1
+008.2   D2
+008.3   D3
+008.4   D4
+008.5   D5
+008.6   D6
+008.7   D7
+009.0   E0
+009.1   E1
+009.2   E2
+015     CCP_1_LOW
+015     CCP_1_HIGH
+015     CCP_1
+01B     CCP_2_HIGH
+01B     CCP_2
+01B     CCP_2_LOW
+020.0   Open_temp
+020.1   Close_temp
+020.2   Slide_Open_temp
+020.3   Slide_Close_temp
+020.4   error_close_slide
+020.5   error_open_slide
+021     temp_quetlcd
+022     @TRIS_C
+023-024 thoigianstop
+025     i
+026     denbao
+027     keyCode
+028     welcome.temp
+028     lcd_init.i
+028     program_Open_Semi.vitri
+028     program_Open.vitri
+028     program_Close.vitri
+028     MAIN.@SCRATCH1
+029.0   program_Close.exit
+029.0   program_Open_Semi.exit
+029.0   program_Open.exit
+029.1   program_Open_Semi.temp_close
+029.1   program_Close.temp_open
+029.1   program_Open.temp_close
+029     lcd_init.@SCRATCH1
+029     welcome.@SCRATCH1
+02A.0   program_Open_Slide.exit
+02A.0   program_Close_Slide.exit
+02A     program_Open_Semi.@SCRATCH1
+02A     program_Open.@SCRATCH1
+02A     program_Close.@SCRATCH1
+02B.0   kiemtra_vitri.error
+02B.0   program_Stop.value
+02B     program_Open_Slide.@SCRATCH1
+02B     program_Close_Slide.@SCRATCH1
+02C     kiemtra_vitri.vt
+02C-02D program_Stop.Stop_temp
+02C     program_Open_Slide.@SCRATCH2
+02D     kiemtra_vitri.vitricua
+02E.0   program_emergency.value
+02E     kiemtra_vitri.i
+02E     program_Stop.@SCRATCH1
+02F     quangbao.temp_denbao
+02F     kiemtra_vitri.j
+02F     @delay_us2.P1
+02F     program_emergency.@SCRATCH1
+030     vitricua_lcd.vt
+030     @delay_ms2.P1
+030     kiemtra_vitri.@SCRATCH1
+031     vitricua_lcd.i
+032     xoaDong.dong
+032     vitricua_lcd.@SCRATCH1
+033     xoaDong.@SCRATCH1
+034     lcd_putc.c
+035     @delay_ms1.P1
+035     lcd_gotoxy.x
+036     lcd_gotoxy.y
+037     lcd_gotoxy.address
+038     lcd_gotoxy.@SCRATCH1
+039     lcd_send_byte.address
+03A     lcd_send_byte.n
+03B     lcd_read_byte.low
+03B     lcd_send_byte.@SCRATCH1
+03C     lcd_send_nibble.n
+03C     lcd_read_byte.high
+03D     lcd_read_nibble.n
+03D     lcd_read_byte.@SCRATCH1
+03E     lcd_read_nibble.@SCRATCH1
+077     @SCRATCH
+078     @SCRATCH
+078     _RETURN_
+079     @SCRATCH
+07A     @SCRATCH
+07B     @SCRATCH
+085     trisa
+086     trisb
+087     trisc
+088     trisd
+089     trise
+09C.6   C1OUT
+09C.7   C2OUT
+10D-10E @READ_PROGRAM_MEMORY8.P1
+10D-10E @WRITE_PROGRAM_MEMORY8.P2
+
+ROM Allocation:
+0917  @delay_ms1
+0004  LCD_INIT_STRING
+0A46  lcd_read_byte
+0A90  lcd_read_nibble
+0B20  lcd_send_nibble
+0A43  lcd_send_byte
+047F  lcd_init
+0637  lcd_gotoxy
+0800  lcd_putc
+0763  xoaDong
+000C  @const93
+07C4  @goto10166
+074F  @delay_ms2
+0EB7  @delay_us2
+07D8  xuat_E0
+07D0  xuat_E1
+0DC4  vitricua_lcd
+0025  @const143
+002C  @const145
+0C63  kiemtra_vitri
+0045  @const153
+005E  @const154
+0077  @const155
+0090  @const157
+00A9  @const159
+0E0D  @goto10317
+00C2  @const161
+00DB  @const165
+00F4  @const166
+0E18  @goto10362
+0110  @const169
+0129  @const170
+0142  @const172
+07CC  quangbao
+11F7  speak
+0E23  program_emergency
+015B  @const187
+0174  @const188
+0E5B  program_Stop
+018D  @const192
+01A6  @const193
+1101  program_Open_Slide
+01BE  @const196
+01D5  @const197
+01EE  @const198
+0205  @const199
+0EDB  program_Close_Slide
+021D  @const203
+0235  @const204
+024E  @const205
+0267  @const206
+12A5  program_Open_Semi
+027F  @const212
+0291  @const213
+02AA  @const214
+02C3  @const215
+02DC  @const216
+1000  program_Open
+02F4  @const221
+0310  @const223
+0327  @const224
+033E  @const225
+11A7  program_Close
+0354  @const231
+0369  @const232
+037F  @const233
+0397  @const234
+03AF  @const235
+0B4C  welcome
+03C6  @const239
+03DD  @const240
+03F4  @const241
+040F  @const242
+0427  @const243
+043E  @const244
+0451  @const245
+136F  MAIN
+142B  @goto10894
+0467  @const250
+136F  @cinit
+
+
+User Memory space: 
+
+Project Directory:
+    D:\TORRENT\New folder\trangthancb\
+
+Project Files:
+    main.c
+    main.h
+    C:\Program Files\PICC\devices\16F877A.h
+    lcd4x20_lib.c
+    Cyclotron.h
+    Eror.h
+
+Units:
+    D:\TORRENT\New folder\trangthancb\main.c (main)
+
+Compiler Settings:
+    Processor:      PIC16F877A
+    Pointer Size:   16
+    ADC Range:      0-255
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+
+Output Files:
+    Errors:      main.err
+    Ext Symbols: main.esym
+    INHX8:       main.hex
+    Symbols:     main.sym
+    List:        main.lst
+    Debug/COFF:  main.cof
+    Project:     main.PJT
+    Call Tree:   main.tre
+    Statistics:  main.sta

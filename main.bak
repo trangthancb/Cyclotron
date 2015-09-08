@@ -1,0 +1,505 @@
+#include "D:\TORRENT\New folder\trangthancb\main.h"
+#define use_portb_lcd true
+#include <lcd4x20_lib.c>
+#include <Cyclotron.h>
+boolean Open_temp, Close_temp ,Slide_Open_temp, Slide_Close_temp = false;//Bien trung gian khai bao trang thai dong/mo cua de hien thi LCD cho dung
+int8 temp_quetlcd; //Thay doi trang thai LCD khi co loi.
+#include <Eror.h>
+boolean error_close_slide; 
+boolean error_open_slide; //Bien trung gian de kiem tra SLIDE khi dong cua
+//Duoc su dung khi Open Slide bi loi
+int16 thoigianstop = 3000;//Mili Giay
+int8 i;
+
+char CONST thongbao[][10]= {"aaaa","bbbbbbbb","ccccc",6,5,4,3,2,1,0};
+int8 denbao;
+int8 keyCode;
+/*
+   0 No Thing
+   1 Close Slide
+   2 Open  Slide
+   3 Close
+   4 Open
+*/
+
+//Chuong trinh hien thi den bao
+void quangbao(){
+   byte temp_denbao;
+   temp_denbao = portD;
+   portD = denbao;
+   xuat_E1();
+   portD = temp_denbao;
+}
+//Chuong trinh Bao Dong bang coi
+void speak(){
+  denbao = 0x80;
+  quangbao();
+  D7 = 1;
+  xuat_E0();
+}
+
+//Chuong trinh con Emergency--------------------------------------------------//
+boolean program_emergency()
+{
+   boolean value;
+   if(SW_Emergency == 0)
+   {
+      denbao = 0x40;
+      quangbao();
+      output_d(0x00);
+      xuat_E0();
+      xoadong(1);
+      lcd_putc("<-  EMERGENCY...  ->");
+      xoadong(2);
+      lcd_putc(" DUNG MOI THAO TAC  ");
+      value = 0;
+   } else {
+      value = 1;
+   }
+   return value;
+}
+
+//Chuong trinh con stop-------------------------------------------------------//
+boolean program_Stop(void)
+{
+   boolean value;
+   int16 Stop_temp;
+   if(Stop == 0){
+      //bit_set(denbao,2);
+      denbao = 0x04;
+      quangbao();
+      xoadong(1);
+      lcd_putc("<-    STOPED...   ->");
+      xoadong(2);
+      lcd_putc("   DUNG THAO TAC   ");
+      if(!Slide_Open_temp || !Slide_Close_temp){
+         output_d(0x10);
+         xuat_E0();
+         value = 0;
+         for (Stop_temp=1;Stop_temp<=1000;++Stop_temp){
+            delay_us(thoigianstop);
+            if(!program_emergency()) break;
+         }
+      }
+      output_d(0x00);
+      xuat_E0();
+   } else {
+      value = 1;
+   }
+   return value;
+}
+
+//Chuong trinh Open Slide-----------------------------------------------------//
+void program_Open_Slide()
+{
+   boolean exit;
+   Slide_Open_temp = true;//Bien trung gian bao dang OPen Slide
+   exit = 1;
+   xoadong(2);
+   lcd_putc("  DANG MO SLIDE...");
+   denbao = 0x10;
+   quangbao();
+   if(SW_Close_Slide == 1 && SW_Open_Slide == 1) 
+   {
+      xoadong(2);
+      lcd_putc("     DA MO SLIDE    ");
+      exit = 0;
+   }
+   while(program_emergency() && program_stop() && exit){
+      D6 = 1;
+      xuat_E0();
+      if(SW_Open_Slide==1)
+      {
+         D6 = 0;
+         xuat_E0();
+         if(SW_Close_Slide ==1) 
+         {
+            xoadong(2);
+            lcd_putc("    SLIDE DA MO");
+         } else {
+            xoadong(1);
+            lcd_putc("HONG SW CLOSE SLIDE");
+            xoadong(2);
+            lcd_putc("   DUNG THAO TAC   ");
+            speak();//Bao dong bang coi.
+            error_open_slide = true;
+         }
+         exit = 0;
+      }
+   }
+   bit_clear(denbao,4);
+   Slide_Open_temp = false; // Khai bao het Open Slide
+   quangbao();
+}
+//Chuong trinh Close Slide----------------------------------------------------//
+void program_Close_Slide()
+{
+   boolean exit;
+   Slide_Close_temp = true; //Khai bao dang Close Slide
+   exit = 1;
+   denbao =  0x20;
+   quangbao();
+   xoadong(2);
+   lcd_putc(" DANG DONG SLIDE...");
+   if(kiemtra_vitri() != 0) 
+   {
+      xoadong(2);
+      lcd_putc("   LOI DONG SLIDE   ");
+      exit = 0;
+   }
+   while(program_emergency() && program_stop() && exit){
+      D5 = 1;
+      xuat_E0();
+      if(SW_Close_Slide==0)
+      {
+         D5 = 0;
+         xuat_E0();
+         if(SW_Open_Slide ==0) 
+         {
+            xoadong(2);
+            lcd_putc("   SLIDE DA DONG    ");
+         } else {
+            xoadong(1);
+            lcd_putc("ERROR SW OPEN SLIDE");
+            xoadong(2);
+            lcd_putc("   DUNG THAO TAC   ");
+            speak();//Bao dong bang coi.
+            error_close_slide = true;
+         }
+         exit = 0;
+      }
+   }
+   bit_clear(denbao,5);
+   quangbao();
+   Slide_Close_temp = false; //Khai bao het Close Slide.
+}
+//Chuong trinh Open Semi------------------------------------------------------//
+Void program_Open_Semi(){
+   int8 vitri;
+   boolean exit,temp_close;
+   Open_temp = true;
+   keyCode = 0;
+   exit = 1;
+   temp_close = false;
+   denbao = 0x08;
+   quangbao();
+   xoadong(2);
+   lcd_putc("OPEN SEMI <--");
+   while(program_emergency() && program_stop() && exit){
+      if(Close == 0){exit = false; temp_close = true;}
+      vitri = kiemtra_vitri();
+      if(vitri == 6) {
+         D0 = 0;
+         D2 = 0;
+         D4 = 0;
+         xuat_E0();
+         xoadong(2);
+         lcd_putc("   STOP OPEN DOOR   ");
+         exit = false;
+      } else if(vitri >=3) {
+         D0 = 1;
+         D2 = 1;
+         D4 = 1;
+         xuat_E0();
+         xoadong(2);
+         lcd_putc("   DANG MO CUA <--  ");
+      } else {
+         D0 = 0;
+         D2 = 0;
+         D4 = 0;
+         xuat_E0();
+         exit = 0;
+         xoadong(2);
+         lcd_putc("    DA MO CUA...    ");
+      }
+   }
+    if(temp_close == true){
+         xoadong(2);
+         lcd_putc(" DANG DUNG THAO TAC");
+         D0 = 0;
+         D2 = 0;
+         D3 = 0;
+         D4 = 1;
+         xuat_E0();
+         delay_ms(3000);
+         keycode = 3;
+    }  
+    Open_temp = false;
+    bit_clear(denbao,4);
+    quangbao();
+}
+//Chuong trinh mo cua---------------------------------------------------------//
+void program_Open()
+{
+   int8 vitri;
+   boolean exit,temp_close;
+   Open_temp = true;
+   denbao = 0x01;
+   quangbao();
+   error_close_slide = false;//Khoi phuc lai trang thai ban dau de kiem tra xem da sua loi chua.
+   keyCode = 0;
+   exit = 1;
+   temp_close = false;
+   xoadong(2);
+   lcd_putc("     MO CUA <--     ");
+   while(program_emergency() && program_stop() && exit){
+         if(Close == 0){exit = false; temp_close = true;}
+         vitri = kiemtra_vitri();
+         if(vitri == 6) {
+            D0 = 0;
+            D2 = 0;
+            D3 = 0;
+            D4 = 0;
+            xuat_E0();
+            exit = 0;  
+            speak();//Bao dong bang coi.
+            xoadong(2);
+            lcd_putc("   STOP OPEN DOOR   ");
+         } else if(vitri >= 2) {
+            D0 = 1;
+            D2 = 1;
+            D3 = 0;
+            D4 = 1;
+            xuat_E0();
+            xoadong(2);
+            lcd_putc(" OPEN DOOR H SPEED");
+         } else if(vitri == 1) {
+            D0 = 1;
+            D2 = 0;
+            D3 = 1;
+            D4 = 1;
+            xuat_E0();
+            xoadong(2);
+            lcd_putc(" OPEN DOOR S SPEED");
+         } else {
+            D0 = 0;
+            D2 = 0;
+            D3 = 0;
+            D4 = 0;
+            xuat_E0();
+            exit = 0;
+            bit_clear(denbao,0);
+            //quangbao();
+            delay_ms(10);
+            program_Close_Slide();
+            if (!error_close_slide){
+               xoadong(2);
+               lcd_putc("   CUA DA DUOC MO");
+            }
+         }
+    }
+     if(temp_close == true){
+         xoadong(2);
+         lcd_putc(" DANG DUNG THAO TAC");
+         D0 = 0;
+         D2 = 0;
+         D3 = 0;
+         D4 = 0;
+         xuat_E0();
+         delay_ms(3000);
+         keycode = 3;
+    }
+    Open_temp = false;
+    bit_clear(denbao,0);
+    quangbao();
+}
+//Chuong trinh dong cua-------------------------------------------------------//
+void program_Close()
+{
+   int8 vitri;
+   boolean exit,temp_open;
+   Close_temp = true;
+   error_open_slide = false;//Khoi phuc lai trang thai de kiem tra  da sua SW chua.
+   keyCode = 0;
+   exit = 1;
+   temp_open = false;
+   xoadong(2);
+   lcd_putc("    DONG CUA -->");
+   program_Open_Slide();
+   denbao = 0x02;
+   quangbao();
+   if(error_open_slide) exit =0;
+   delay_ms(10);
+   while(program_emergency() && program_stop() && exit){
+            vitri = kiemtra_vitri();
+            if(Open == 0){exit = false; temp_open = true;}
+            if(vitri == 6) {
+               D1 = 0;
+               D2 = 0;
+               D3 = 0;
+               D4 = 0;
+               xuat_E0();
+               exit = 0;  
+               speak();//Bao dong bang coi.
+               xoadong(2);
+               lcd_putc("  STOP CLOSE DOOR");
+            } else if(vitri <= 3) {
+               D1 = 1;
+               D2 = 1;
+               D3 = 0;
+               D4 = 1;
+               xuat_E0();
+               xoadong(2);
+               lcd_putc(" CLOSE DOOR H SPEED");
+            } else if(vitri == 4) {
+               D1 = 1;
+               D2 = 0;
+               D3 = 1;
+               D4 = 1;
+               xuat_E0();
+               xoadong(2);
+               lcd_putc(" CLOSE DOOR S SPEED");
+            } else {
+               D1 = 0;
+               D2 = 0;
+               D3 = 0;
+               D4 = 0;
+               xuat_E0();
+               exit = 0;
+               xoadong(2);
+               lcd_putc("  CUA DA DUOC DONG");
+            }
+    }
+    if(temp_open == true){
+         xoadong(2);
+         lcd_putc(" DANG DUNG THAO TAC");
+         D1 = 0;
+         D2 = 0;
+         D3 = 0;
+         D4 = 1;
+         xuat_E0();
+         delay_ms(3000);
+         keyCode = 4;
+    }
+    Close_temp = false;
+    bit_clear(denbao,1);
+    quangbao();
+}
+
+void welcome()
+{  
+   int8 temp;
+   lcd_gotoxy(1,1);
+   for (i=1;i<=20;++i) {
+      lcd_putc(0xff);
+      delay_ms(15);
+   }
+   lcd_gotoxy(20,2);              // hang thu 2
+   lcd_putc(0xff);
+   delay_ms(15);
+   lcd_gotoxy(40,1); 
+   lcd_putc(0xff);
+   delay_ms(15);
+   for (i=1;i<=20;++i) {
+      temp = 41 - i;
+      lcd_gotoxy(temp,2);
+      lcd_putc(0xff);
+      delay_ms(15);
+   }
+   lcd_gotoxy(21,1);              // hang thu 2
+   lcd_putc(0xff);
+   delay_ms(15);
+   lcd_gotoxy(1,2); 
+   lcd_putc(0xff);
+   delay_ms(15);
+   lcd_gotoxy(2,2);
+   lcd_putc(" VAN THANH Co.ltd ");
+   lcd_gotoxy(22,1);             // hang thu 3
+   lcd_putc(" (0511) 364 7676  ");
+   delay_ms(500);
+   lcd_gotoxy(1,1);
+   lcd_putc("\f   INITIALIZING..."); // hang thu 1
+   lcd_gotoxy(1,2);              // hang thu 2
+   lcd_putc("  CYCLOTRON DOOR ->");
+   lcd_gotoxy(21,1);             // hang thu 3
+   lcd_putc("  VAN THANH Co.ltd");
+   lcd_gotoxy(21,2);             // hang thu 4
+   for (i=1;i<=20;++i) {
+      lcd_putc(0xff);
+      delay_ms(30);
+   }
+   delay_ms(500);
+   xoadong(1);
+   lcd_putc("      READY..."); // hang thu 1
+   xoadong(4);
+   lcd_putc("  (0511) 364 7676");
+}
+void main()
+{
+   set_timer0(0);
+   setup_counters( RTCC_INTERNAL, RTCC_DIV_256 | RTCC_8_BIT);
+   enable_interrupts(INT_RTCC);
+   enable_interrupts(GLOBAL);
+   //ext_int_edge(H_TO_L);
+   //enable_interrupts(INT_EXT);
+   //enable_interrupts(GLOBAL);
+   //Cai dat vao ra
+     trisa = 0xff;
+     trisb = 0x00;
+     trisc = 0xff;
+     trisd = 0xff;
+     trisd = 0x00;
+     trise=   0x00;
+     output_d(0x00);
+   // TODO: USER CODE!!
+   lcd_init();
+   //welcome();
+   denbao = 0x00;
+   Open_temp = false;   //Bien trung gian bao dang thuc hien mo cua
+   Close_temp = false;  //Bien trung gian bao dang thuc hien dong cua
+   Slide_Open_temp = false;
+   Slide_Close_temp = false;
+   error_open_slide = false;//Kiem tra loi khi dong cua.
+   error_close_slide = false;  
+   temp_quetlcd = 7;    //Cai dat ban dau se kiem tra vi tri cua.
+   keyCode = 0;
+   xoadong(1);
+   lcd_putc(thongbao[0]);
+   delay_ms(3000);
+   xoadong(1);
+   lcd_putc(thongbao[1]);
+   delay_ms(3000);
+   lcd_putc(thongbao[2]);
+   delay_ms(3000);
+   while(1)
+     {
+         if(SW_Emergency != 0){
+            kiemtra_vitri();
+            if(Open == 0) {
+               program_Open();
+            }else if(Close == 0){
+               program_Close();
+            }else if(Semi_Open == 0){
+               program_Open_Semi();
+            }else if(Open_Slide == 0){
+               program_Open_Slide();
+            }else if(Close_Slide == 0){
+               program_Close_Slide();
+            } else if(Stop == 0) {
+               bit_clear(denbao,7);
+               quangbao();
+               D7 = 0;
+               xuat_E0();
+               temp_quetlcd = 7;    //Cai dat ban dau se kiem tra vi tri cua.
+            }
+            switch(keyCode)
+               {
+                  case 1: program_Close_Slide();Break;
+                  case 2: program_Open_Slide();Break;
+                  case 3: program_Close();Break;
+                  case 4: program_Open();Break;
+               }
+           bit_clear(denbao,6);
+           quangbao();
+         } else {
+            lcd_gotoxy(1,1);
+            lcd_putc("<-  EMERGENCY...  ->");
+            lcd_gotoxy(1,2);
+            lcd_putc(" DUNG MOI THAO TAC ");
+            denbao = 0x40;
+            quangbao();
+            temp_quetlcd = 7;    //Cai dat ban dau se kiem tra vi tri cua.
+         }
+     //printf(lcd_putc," keyCode = %u",debug);
+     }
+}

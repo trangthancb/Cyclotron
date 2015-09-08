@@ -1,0 +1,127 @@
+
+ROM used: 4982 (61%)
+          5171 (63%) including unused fragments
+
+          4 Average locations per line
+          8 Average locations per statement
+
+RAM used: 15 (4%) at main() level
+          37 (10%) worst case
+
+Stack used: 7 worst case (out of 8 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  506   424  69  main.c
+   17     0   0  main.h
+  310     0   0  C:\Program Files\PICC\devices\16F877A.h
+  375    99  16  lcd4x20_lib.c
+   67     6   1  Cyclotron.h
+  100    84  14  Eror.h
+----- -----
+ 1375   613 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+ Inline        1             @delay_ms1
+0      8   0   0             @const67
+ Inline        3   751  4.5  lcd_read_byte
+ Inline        2   254  3.7  lcd_read_nibble
+ Inline        1   391  2.4  lcd_send_nibble
+ Inline        3   313  3.4  lcd_send_byte
+0    440   9   2   660  4.9  lcd_init
+0    280   6   4   186  5.5  lcd_gotoxy
+1    844  17   1   272  4.1  lcd_putc
+0     97   2   2   508  3.7  xoaDong
+0     25   1   0             @const93
+0      8   0   0             @goto10166
+0     20   0   1             @delay_ms2
+ Inline        1             @delay_us2
+0      6   0   0    50  1.5  xuat_E0
+ Inline        0    50  1.5  xuat_E1
+ Inline        3   373  3.3  vitricua_lcd
+0      7   0   0             @const143
+0     25   1   0             @const145
+1    426   9   6  2457 10.9  kiemtra_vitri
+0     25   1   0             @const153
+0     25   1   0             @const154
+0     25   1   0             @const155
+0     25   1   0             @const157
+0     25   1   0             @const159
+1     11   0   0             @goto10317
+0     25   1   0             @const161
+0     25   1   0             @const165
+0     28   1   0             @const166
+1     11   0   0             @goto10362
+0     25   1   0             @const169
+0     25   1   0             @const170
+0     25   1   0             @const172
+0     12   0   1    76  1.8  quangbao
+ Inline        0    57  1.5  speak
+1     56   1   2   275  3.5  program_emergency
+0     25   1   0             @const187
+0     25   1   0             @const188
+1    128   3   4   563  6.5  program_Stop
+0     25   1   0             @const192
+0     24   0   0             @const193
+2    166   3   3   839  4.8  program_Open_Slide
+0     23   0   0             @const196
+0     25   1   0             @const197
+0     23   0   0             @const198
+0     24   0   0             @const199
+1    138   3   2   818  5.2  program_Close_Slide
+0     24   0   0             @const203
+0     25   1   0             @const204
+0     25   1   0             @const205
+0     24   0   0             @const206
+2    202   4   3  1468  5.3  program_Open_Semi
+0     18   0   0             @const212
+0     25   1   0             @const213
+0     25   1   0             @const214
+0     25   1   0             @const215
+0     24   0   0             @const216
+2    257   5   3  2055  5.9  program_Open
+0     28   1   0             @const221
+0     23   0   0             @const223
+0     23   0   0             @const224
+0     22   0   0             @const225
+2    254   5   3  2020  5.4  program_Close
+0     21   0   0             @const231
+0     22   0   0             @const232
+0     24   0   0             @const233
+0     24   0   0             @const234
+0     23   0   0             @const235
+1    279   6   2  1528  4.4  welcome
+0     23   0   0             @const239
+0     23   0   0             @const240
+0     27   1   0             @const241
+0     24   0   0             @const242
+0     23   0   0             @const243
+0     19   0   0             @const244
+0     22   0   0             @const245
+2    188   4   1  1789  7.3  MAIN
+2      8   0   0             @goto10894
+0     24   0   0             @const250
+
+Program metrics:
+    Functions               23
+    Statements              613
+    Comments                240
+    Volume (V)              29157
+    Difficilty (D)          98.0
+    Effort to implement (E) 2858500
+    Time to implement (T)   44 hours, 7 minutes
+    Est Delivered Bugs (B)  7
+    Cyclomatic Complexity   86
+    Maintainability (MI)    32
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-007FF  2010  34  
+00800-00FFF  1893  155  
+01000-017FF  1075  973  
+01800-01FFF     0  2048  
+
+
+

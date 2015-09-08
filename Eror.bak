@@ -1,0 +1,99 @@
+void vitricua_lcd(int8 vt)
+{
+   int i;
+   xoadong(3);
+   for(i=0; i<vt; i++){
+      lcd_putc("  ");
+   }
+   for(i=0; i<10; i++){
+      lcd_putc(0xff);
+   }
+   for(i=0; i<vt; i++){
+      lcd_putc("  ");
+   }
+   xoadong(4);
+   lcd_putc("  Open        Close ");
+}
+//Kiem tra loi cua Cyclontron
+//Chu y: Neu bi loi, tra ve TRUE
+
+//Kiem tra loi SWITCH cua-----------------------------------------------------//
+//Vi tri cua
+//0-------1---------2----------3-----------4-----------5
+//  Open2    Open1      Mid        Close1      Close2
+
+//PortC
+// closeSwitch2   closeSwitch1   midSwitch   openSwitch1    openSwitch2
+//    C0             C1             C2          C3             C4
+int8 kiemtra_vitri()
+{
+   boolean error;
+   int8 vt;
+   int8 vitricua;//Bien trung gian doc portC
+   int i,j;
+   error = false;
+   vt = 0;
+   //Xac dinh vi tri ban dau cua Cua Cyclotron.
+   if (SW_Open2 == 0) vt = 1;
+   if (SW_Open1 == 0) vt = 2;
+   if (SW_Mid == 0) vt = 3;
+   if (SW_Close1 == 0) vt = 4;
+   if (SW_Close2 == 0) vt = 5;
+   
+   /*Kiem tra vi tri do co dung hay khong.
+   * Thuat toan: Lay gia tri "vt" lam trung tam
+   * Kiem tra ve 2 phia cua "vt".
+   * O day ta co 5 vi tri, "vt" se la 1 trong 5 vi tri do
+   *    Open2     Open1     Mid      Close1   Close2
+   * --0--------1--------2--------vt-------4---------5
+   * Kiemm tra xem cac SW ben phai "vt" neu bang "1" va ben trai "vt" bang "0" thi
+   dat yeu cau
+   * Neu sai thi cho "vt" = 6 <=> Hong SW */
+   
+   vitricua = input_c();
+   j = 5 - vt;
+   for(i=0; i<5; i++){
+      if(i>= j && bit_test(vitricua,i)) error = true;
+      if(i< j && !bit_test(vitricua,i)) error = true;
+   }
+   if(error)vt=6;
+   if(vt != temp_quetlcd){
+   xoadong(1);
+   if(Open_temp){
+      switch(vt)
+      {
+         case 0: lcd_putc("<-    CUA DA MO   ->");break;
+         case 1: lcd_putc("<- CUA MO GAN HET ->");break;
+         case 2: lcd_putc("<- CUA DANG O GIUA->");break;
+         case 3: lcd_putc("<- CUA DANG O GIUA->");break;
+         case 4: lcd_putc("<-  CUA DANG MO   ->");break;
+         case 5: lcd_putc("<-  CUA DANG MO   ->");break;
+         case 6: lcd_putc("<- ERROR SW DOOR  ->");break;
+      
+      }
+   } else if(Close_temp){
+      switch(vt)
+      {
+         case 0: lcd_putc("<- CUA DANG DONG  ->");break;
+         case 1: lcd_putc("<- CUA DANG DONG  ->");break;
+         case 2: lcd_putc("<- CUA DANG O GIUA->");break;
+         case 3: lcd_putc("<- CUA DANG O GIUA->");break;
+         case 4: lcd_putc("<-CUA DONG GAN HET->");break;
+         case 5: lcd_putc("<-  CUA DA DONG   ->");break;
+         case 6: lcd_putc("<- ERROR SW DOOR  ->");break;
+      }
+   }else{
+   switch(vt)
+      {
+         case 0: lcd_putc("<- CYCLOTRON OPEN ->");break;
+         case 5: lcd_putc("<- CYCLOTRON CLOSE->");break;
+         case 6: lcd_putc("<- ERROR SW DOOR  ->");break;
+         default: lcd_putc("<- CYCLOTRON  MID ->");
+      }
+   }
+   temp_quetlcd = vt;
+   vitricua_lcd(vt);
+   }
+   return vt;
+}
+

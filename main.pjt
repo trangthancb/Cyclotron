@@ -1,0 +1,31 @@
+[PROJECT]
+Target=D:\TORRENT\New folder\trangthancb\main.hex
+Development_Mode=
+Processor_Text=PIC16F877A
+ToolSuite=CCS
+Processor=0x877A
+[D:\TORRENT\New folder\trangthancb\main]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+[mru-list]
+1=D:\TORRENT\New folder\trangthancb\main.c
+[Windows]
+0=0000 %S 0 0 796 451 3 0
+[Units]
+Link=0
+Count=1
+1=D:\TORRENT\New folder\trangthancb\main
+[Opened Files]
+1=main.c
+2=Cyclotron.h
+3=Eror.h
+4=lcd4x20_lib.c
+5=C:\Program Files\PICC\examples\ex_stwt.c
+6=C:\Program Files\PICC\examples\ex_sisr.c
+7=
+8=C:\Program Files\PICC\examples\ex_psp.c
+9=
